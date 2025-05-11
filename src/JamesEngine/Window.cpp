@@ -17,7 +17,7 @@ namespace JamesEngine
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-		mRaw = SDL_CreateWindow("My Engine",
+		mRaw = SDL_CreateWindow("Racing Game 3",
 			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 			mWidth, mHeight,
 			SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);

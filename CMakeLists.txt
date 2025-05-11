@@ -139,8 +139,8 @@ add_library(Renderer
 
 target_link_libraries(Renderer SDL2 OpenGL32 glew32 freetype)
 
-add_executable(demo
-	src/demo/main.cpp
+add_executable(RacingGame
+	src/RacingGame/main.cpp
 )
 
-target_link_libraries(demo JamesEngine)
+target_link_libraries(RacingGame JamesEngine)
