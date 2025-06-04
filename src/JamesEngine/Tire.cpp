@@ -111,11 +111,11 @@ namespace JamesEngine
         float slipAngle = std::atan2(Vy, VxClamped);
 
         // Compute vertical load from suspension compression and weight transfer
-        float suspensionCompression = mSuspension->GetCompression() - 0.03; // Hardcoded rest heigh on front wheels
+        float suspensionCompression =  - 0.03; // Hardcoded rest heigh on front wheels
         float baseWeight = mCarRb->GetMass() / 4.0f * 9.81f;
         float weightTransferCoeff = 20000.0f; // Arbitrary value
         float additionalLoad = suspensionCompression * weightTransferCoeff;
-        float Fz = baseWeight + additionalLoad;
+        float Fz = mSuspension->GetForce();
 
         // Determine tire stiffness and maximum friction force
         float longStiff = mTireParams.brushLongStiffCoeff * Fz;

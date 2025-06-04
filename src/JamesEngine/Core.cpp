@@ -91,6 +91,11 @@ namespace JamesEngine
 			{
 				for (size_t ei = 0; ei < mEntities.size(); ++ei)
 				{
+					mEntities[ei]->OnEarlyFixedTick();
+				}
+
+				for (size_t ei = 0; ei < mEntities.size(); ++ei)
+				{
 					mEntities[ei]->OnFixedTick();
 				}
 

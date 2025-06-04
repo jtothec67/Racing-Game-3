@@ -27,15 +27,8 @@ namespace JamesEngine
 		mR = glm::toMat4(GetQuaternion());
 	}
 
-	void Rigidbody::OnFixedTick()
+	void Rigidbody::OnEarlyFixedTick()
 	{
-		if (!mIsStatic)
-		{
-			// Step 1: Compute each of the forces acting on the object (only gravity by default)
-			glm::vec3 force = mMass * mAcceleration;
-			AddForce(force);
-		}
-
 		// Step 2: Compute collisions
 		// Get all colliders in the scene
 		std::vector<std::shared_ptr<Collider>> colliders;
@@ -121,10 +114,16 @@ namespace JamesEngine
 				}
 			}
 		}
+	}
 
-		
+	void Rigidbody::OnFixedTick()
+	{
 		if (!mIsStatic)
 		{
+			// Step 1: Compute each of the forces acting on the object (only gravity by default)
+			glm::vec3 force = mMass * mAcceleration;
+			AddForce(force);
+
 			// Step 5: Integration
 			//Euler();
 			SemiImplicitEuler();

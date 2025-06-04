@@ -162,9 +162,9 @@ struct CarController : public Component
 
 	// Steering and pedal deadzones and limits
 	float mSteerDeadzone = 0.1f;
-	float mThrottleMaxInput = 1.f;
+	float mThrottleMaxInput = 0.62f;
 	float mThrottleDeadZone = 0.05f;
-	float mBrakeMaxInput = 1.f;
+	float mBrakeMaxInput = 0.77f;
 	float mBrakeDeadZone = 0.05f;
 
 	// Current input values
@@ -694,24 +694,26 @@ int main()
 		rearTyreParams.wheelMass = 25.f;
 		rearTyreParams.rollingResistance = 0.015f;
 
-		float FStiffness = 70000;
-		float FDamping = 12500;
+		float FStiffness = 100000;
+		float FDamping = 10000;
+		float FRestLength = 0.02f;
 
-		float RStiffness = 50000;
-		float RDamping = 20000;
+		float RStiffness = 110000;
+		float RDamping = 11000;
+		float RRestLength = 0.0325f;
 
 		core->GetSkybox()->SetTexture(core->GetResources()->Load<SkyboxTexture>("skyboxes/sky"));
 
 		core->GetLightManager()->AddLight("light1", vec3(0, 20000, 0), vec3(1, 1, 1), 1.f);
 		core->GetLightManager()->SetAmbient(vec3(0.4f));
 
-		//// Cameras
-		//std::shared_ptr<Entity> freeCamEntity = core->AddEntity();
-		//std::shared_ptr<Camera> freeCam = freeCamEntity->AddComponent<Camera>();
-		//freeCam->SetPriority(10);
-		//freeCamEntity->GetComponent<Transform>()->SetPosition(vec3(204.75, -84.9107, -384.765));
-		//freeCamEntity->GetComponent<Transform>()->SetRotation(vec3(0, 0, 0));
-		//freeCamEntity->AddComponent<freelookCamController>();
+		// Cameras
+		std::shared_ptr<Entity> freeCamEntity = core->AddEntity();
+		std::shared_ptr<Camera> freeCam = freeCamEntity->AddComponent<Camera>();
+		freeCam->SetPriority(10);
+		freeCamEntity->GetComponent<Transform>()->SetPosition(vec3(647.479, -65.4695, -252.504));
+		freeCamEntity->GetComponent<Transform>()->SetRotation(vec3(0, 0, 0));
+		freeCamEntity->AddComponent<freelookCamController>();
 
 		std::shared_ptr<Entity> cockpitCamEntity = core->AddEntity();
 		std::shared_ptr<Camera> cockpitCam = cockpitCamEntity->AddComponent<Camera>();
@@ -947,7 +949,7 @@ int main()
 		FLWheelMR->SetRotationOffset(vec3(0, 90, 0));
 		std::shared_ptr<RayCollider> FLWheelCollider = FLWheel->AddComponent<RayCollider>();
 		FLWheelCollider->SetDirection(vec3(0, -1, 0));
-		FLWheelCollider->SetLength(0.4);
+		FLWheelCollider->SetLength(0.34);
 		std::shared_ptr<Rigidbody> FLWheelRB = FLWheel->AddComponent<Rigidbody>();
 		FLWheelRB->SetMass(2.5);
 		FLWheelRB->LockRotation(true);
@@ -958,6 +960,7 @@ int main()
 		FLWheelSuspension->SetAnchorPoint(FLWheelAnchor);
 		FLWheelSuspension->SetStiffness(FStiffness);
 		FLWheelSuspension->SetDamping(FDamping);
+		FLWheelSuspension->SetRestLength(FRestLength);
 		std::shared_ptr<Tire> FLWheelTire = FLWheel->AddComponent<Tire>();
 		FLWheelTire->SetCarBody(carBody);
 		FLWheelTire->SetAnchorPoint(FLWheelAnchor);
@@ -979,7 +982,7 @@ int main()
 		FRWheelMR->SetRotationOffset(vec3(0, -90, 0));
 		std::shared_ptr<RayCollider> FRWheelCollider = FRWheel->AddComponent<RayCollider>();
 		FRWheelCollider->SetDirection(vec3(0, -1, 0));
-		FRWheelCollider->SetLength(0.4);
+		FRWheelCollider->SetLength(0.34);
 		std::shared_ptr<Rigidbody> FRWheelRB = FRWheel->AddComponent<Rigidbody>();
 		FRWheelRB->SetMass(2.5);
 		FRWheelRB->LockRotation(true);
@@ -990,6 +993,7 @@ int main()
 		FRWheelSuspension->SetAnchorPoint(FRWheelAnchor);
 		FRWheelSuspension->SetStiffness(FStiffness);
 		FRWheelSuspension->SetDamping(FDamping);
+		FRWheelSuspension->SetRestLength(FRestLength);
 		std::shared_ptr<Tire> FRWheelTire = FRWheel->AddComponent<Tire>();
 		FRWheelTire->SetCarBody(carBody);
 		FRWheelTire->SetAnchorPoint(FRWheelAnchor);
@@ -1011,7 +1015,7 @@ int main()
 		RLWheelMR->SetRotationOffset(vec3(0, 90, 0));
 		std::shared_ptr<RayCollider> RLWheelCollider = RLWheel->AddComponent<RayCollider>();
 		RLWheelCollider->SetDirection(vec3(0, -1, 0));
-		RLWheelCollider->SetLength(0.4);
+		RLWheelCollider->SetLength(0.34);
 		std::shared_ptr<Rigidbody> RLWheelRB = RLWheel->AddComponent<Rigidbody>();
 		RLWheelRB->SetMass(2.5);
 		RLWheelRB->LockRotation(true);
@@ -1022,6 +1026,7 @@ int main()
 		RLWheelSuspension->SetAnchorPoint(RLWheelAnchor);
 		RLWheelSuspension->SetStiffness(RStiffness);
 		RLWheelSuspension->SetDamping(RDamping);
+		RLWheelSuspension->SetRestLength(RRestLength);
 		std::shared_ptr<Tire> RLWheelTire = RLWheel->AddComponent<Tire>();
 		RLWheelTire->SetCarBody(carBody);
 		RLWheelTire->SetAnchorPoint(RLWheelAnchor);
@@ -1043,7 +1048,7 @@ int main()
 		RRWheelMR->SetRotationOffset(vec3(0, -90, 0));
 		std::shared_ptr<RayCollider> RRWheelCollider = RRWheel->AddComponent<RayCollider>();
 		RRWheelCollider->SetDirection(vec3(0, -1, 0));
-		RRWheelCollider->SetLength(0.4);
+		RRWheelCollider->SetLength(0.34);
 		std::shared_ptr<Rigidbody> RRWheelRB = RRWheel->AddComponent<Rigidbody>();
 		RRWheelRB->SetMass(2.5);
 		RRWheelRB->LockRotation(true);
@@ -1054,6 +1059,7 @@ int main()
 		RRWheelSuspension->SetAnchorPoint(RRWheelAnchor);
 		RRWheelSuspension->SetStiffness(RStiffness);
 		RRWheelSuspension->SetDamping(RDamping);
+		RRWheelSuspension->SetRestLength(RRestLength);
 		std::shared_ptr<Tire> RRWheelTire = RRWheel->AddComponent<Tire>();
 		RRWheelTire->SetCarBody(carBody);
 		RRWheelTire->SetAnchorPoint(RRWheelAnchor);

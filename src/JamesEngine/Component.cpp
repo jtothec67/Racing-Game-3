@@ -109,9 +109,16 @@ namespace JamesEngine
 		GetTransform()->Rotate(_amount);
 	}
 
+
+
 	void Component::Tick()
 	{
 		OnTick();
+	}
+
+	void Component::EarlyFixedTick()
+	{
+		OnEarlyFixedTick();
 	}
 
 	void Component::FixedTick()

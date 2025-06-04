@@ -54,13 +54,17 @@ namespace JamesEngine
 		 */
 		virtual void OnTick() { }
 		/**
+		 * @brief Called before OnFixedTick().
+		 */
+		virtual void OnEarlyFixedTick() { }
+		/**
 		 * @brief Called 200 times a second.
 		 */
-		virtual void OnFixedTick() {}
+		virtual void OnFixedTick() { }
 		/**
 		 * @brief Called after OnFixedTick().
 		 */
-		virtual void OnLateFixedTick() {}
+		virtual void OnLateFixedTick() { }
 		/**
 		 * @brief Called after OnTick().
 		 */
@@ -89,6 +93,7 @@ namespace JamesEngine
 		std::weak_ptr<Entity> mEntity;
 
 		void Tick();
+		void EarlyFixedTick();
 		void FixedTick();
 		void LateFixedTick();
 		void Render();

@@ -28,6 +28,14 @@ namespace JamesEngine
 		}
 	}
 
+	void Entity::OnEarlyFixedTick()
+	{
+		for (size_t ci = 0; ci < mComponents.size(); ++ci)
+		{
+			mComponents.at(ci)->EarlyFixedTick();
+		}
+	}
+
 	void Entity::OnFixedTick()
 	{
 		for (size_t ci = 0; ci < mComponents.size(); ++ci)

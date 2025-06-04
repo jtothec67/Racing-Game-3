@@ -9,6 +9,7 @@ namespace JamesEngine
 	{
 	public:
 		void OnAlive();
+		void OnEarlyFixedTick();
 		void OnFixedTick();
 
 		void AddForce(glm::vec3 _force) { mForce += _force; }

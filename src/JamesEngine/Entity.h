@@ -88,6 +88,7 @@ namespace JamesEngine
 		bool mJustCreated = true;
 
 		void OnTick();
+		void OnEarlyFixedTick();
 		void OnFixedTick();
 		void OnLateFixedTick();
 		void OnRender();

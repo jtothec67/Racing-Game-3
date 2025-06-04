@@ -119,52 +119,58 @@ namespace JamesEngine
 
     void Suspension::OnFixedTick()
     {
-        // Sets the position of the wheel to be the same as the anchor point
+        // Get anchor position and suspension direction
         glm::vec3 anchorPos = mAnchorPoint->GetComponent<Transform>()->GetPosition();
-        mWheel->GetComponent<Transform>()->SetPosition(anchorPos);
+        glm::vec3 suspensionDir = glm::normalize(mAnchorPoint->GetComponent<Transform>()->GetUp());
 
-        // Compute wheel model offset based on contact or full suspension travel
-        float offsetDistance = mWheelRadius - (mGroundContact ? mHitDistance : mSuspensionTravel);
+        // Calculate current length from anchor to wheel center
+        float currentLength = mRestLength;
+        if (mGroundContact)
+        {
+            float compressionDistance = mWheelRadius - mHitDistance;
+            currentLength = glm::clamp(mRestLength - compressionDistance, mRestLength - mSuspensionTravel, mRestLength);
 
-        // Apply visual offset to wheel model
-        glm::vec3 modelOffsetLocal(0.0f, offsetDistance, 0.0f);
-        mWheel->GetComponent<ModelRenderer>()->SetPositionOffset(modelOffsetLocal);
+        }
+        else
+        {
+			std::cout << GetEntity()->GetTag() << " suspension not grounded" << std::endl;
+        }
 
-        // If wheel is not touching ground, no suspension force
+        // Set wheel position based on suspension length
+        glm::vec3 wheelPos = anchorPos - suspensionDir * currentLength;
+        mWheel->GetComponent<Transform>()->SetPosition(wheelPos);
+
+        // No force if not grounded
         if (!mGroundContact)
             return;
 
-        // Determine suspension direction from anchor transform
-        std::shared_ptr<Transform> anchorTransform = mAnchorPoint->GetComponent<Transform>();
-        glm::vec3 suspensionDirection = glm::normalize(anchorTransform->GetUp());
+        // Calculate displacement
+        float displacement = mRestLength - currentLength;
 
-		// Calculate compression ratio of suspension, 0 at ideal height, 1 at max compression
-        mCompression = (mWheelRadius - mHitDistance) / mSuspensionTravel;
+        // Get wheel velocity along suspension axis
+        glm::vec3 pointVelocity = mCarRb->GetVelocityAtPoint(wheelPos);
+        float relativeVelocity = glm::dot(pointVelocity, suspensionDir);
 
-        // Get velocity of wheel anchor point along suspension axis
-        glm::vec3 pointVelocity = mCarRb->GetVelocityAtPoint(anchorTransform->GetPosition());
-        float relativeVelocity = glm::dot(pointVelocity, suspensionDirection);
+        // Calculate spring and damping forces
+        float springForce = mStiffness * displacement;
+        float dampingForce = -mDamping * relativeVelocity;
 
-        // Compute spring force from stiffness and compression
-        float springForce = mStiffness * mCompression;
+        // Apply total force to chassis
+        glm::vec3 totalForce = suspensionDir * (springForce + dampingForce);
+        mCarRb->ApplyForce(totalForce, anchorPos);
 
-		// Compute damping force based on velocity and compression
-        float dampingForce = -mDamping * (glm::sign(mCompression) * relativeVelocity);
-
-        // Apply combined spring and damping force to chassis
-        glm::vec3 totalForce = suspensionDirection * (springForce + dampingForce);
-        mCarRb->ApplyForce(totalForce, anchorTransform->GetPosition());
+        mForce = springForce + dampingForce;
     }
 
-	void Suspension::OnLateFixedTick()
-	{
-		// Reset ground contact state for next frame
+    void Suspension::OnLateFixedTick()
+    {
+        // Reset contact
         mGroundContact = false;
-	}
+    }
 
     void Suspension::OnTick()
     {
-		// Sets the wheel rotation based on the steering angle
+        // Apply steering rotation
         glm::quat anchorRotationQuat = mAnchorPoint->GetComponent<Transform>()->GetWorldRotation();
         glm::quat steeringQuat = glm::angleAxis(glm::radians(mSteeringAngle), glm::vec3(0.0f, 1.0f, 0.0f));
         glm::quat finalRotation = anchorRotationQuat * steeringQuat;
