@@ -363,6 +363,83 @@ namespace JamesEngine
         return false;
     }
 
+    bool ModelCollider::RayCollision(const Ray& _ray, RaycastHit& _outHit)
+    {
+        // Compute ray's world-space origin.
+        glm::vec3 rayOrigin = _ray.origin;
+        glm::vec3 rayDirection = glm::normalize(_ray.direction);
+		float rayLength = _ray.length;
+
+        // Build the model's world transformation matrix.
+        glm::vec3 modelPos = GetPosition() + GetPositionOffset();
+        glm::vec3 modelScale = GetScale();
+        glm::vec3 modelRotation = GetRotation() + GetRotationOffset();
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
+        modelMatrix = glm::translate(modelMatrix, modelPos);
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(modelRotation.x), glm::vec3(1, 0, 0));
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(modelRotation.y), glm::vec3(0, 1, 0));
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(modelRotation.z), glm::vec3(0, 0, 1));
+        modelMatrix = glm::scale(modelMatrix, modelScale);
+
+        // Compute the ray's endpoint
+        glm::vec3 rayEnd = rayOrigin + rayDirection * rayLength;
+
+        // Compute min and max of the ray's endpoints.
+        glm::vec3 bbMin = glm::min(rayOrigin, rayEnd);
+        glm::vec3 bbMax = glm::max(rayOrigin, rayEnd);
+
+        // Calculate the center and size (extents) of the AABB.
+        glm::vec3 bbCenter = (bbMin + bbMax) * 0.5f;
+        glm::vec3 bbSize = bbMax - bbMin;
+
+        // Retrieve the triangles from the model that lie within the ray's AABB.
+        std::vector<Renderer::Model::Face> faces = GetTriangles(bbCenter, glm::vec3(0), bbSize);
+
+        bool hit = false;
+        float closestT = rayLength;
+        glm::vec3 hitPoint, hitNormal;
+
+        // Test each triangle for intersection with the ray.
+        for (const auto& face : faces)
+        {
+            // Transform triangle vertices to world space.
+            glm::vec3 a = glm::vec3(modelMatrix * glm::vec4(face.a.position, 1.0f));
+            glm::vec3 b = glm::vec3(modelMatrix * glm::vec4(face.b.position, 1.0f));
+            glm::vec3 c = glm::vec3(modelMatrix * glm::vec4(face.c.position, 1.0f));
+
+            // Test for ray-triangle intersection.
+            float t, u, v;
+            if (Maths::RayTriangleIntersect(rayOrigin, rayDirection, a, b, c, t, u, v))
+            {
+                // Ensure the hit is in front of the ray origin and is the closest so far.
+                if (t >= 0.0f && t < closestT && t <= rayLength)
+                {
+                    closestT = t;
+                    hitPoint = rayOrigin + rayDirection * t;
+                    // Compute the triangle's normal.
+                    hitNormal = glm::normalize(glm::cross(b - a, c - a));
+                    // Ensure the normal points against the ray direction.
+                    if (glm::dot(rayDirection, hitNormal) > 0.0f)
+                        hitNormal = -hitNormal;
+                    hit = true;
+                }
+            }
+        }
+
+        if (hit)
+        {
+			_outHit.point = hitPoint;
+			_outHit.normal = hitNormal;
+			_outHit.distance = closestT;
+			_outHit.hitEntity = GetEntity();
+			_outHit.hit = true;
+
+            return true;
+        }
+
+		return false;
+    }
+
     float TetrahedronVolume(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c) {
         return glm::dot(a, glm::cross(b, c)) / 6.0f;
     }

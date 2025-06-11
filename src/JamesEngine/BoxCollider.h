@@ -18,6 +18,7 @@ namespace JamesEngine
 #endif
 
 		bool IsColliding(std::shared_ptr<Collider> _other, glm::vec3& _collisionPoint, glm::vec3& _normal, float& _penetrationDepth);
+		bool RayCollision(const Ray& _ray, RaycastHit& _outHit) { return false; }
 
 		glm::mat3 UpdateInertiaTensor(float _mass);
 

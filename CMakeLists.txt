@@ -114,6 +114,9 @@ add_library(JamesEngine
 
 	src/JamesEngine/Tire.h
 	src/JamesEngine/Tire.cpp
+
+	src/JamesEngine/RaycastSystem.h
+	src/JamesEngine/RaycastSystem.cpp
 )
 
 target_link_libraries(JamesEngine Renderer openal32)

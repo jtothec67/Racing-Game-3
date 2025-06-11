@@ -48,6 +48,7 @@ namespace JamesEngine
 		void SetDebugVisual(bool _value) { mDebugVisual = _value; }
 
 		void SetHitDistance(float _hitDistance) { mHitDistance = _hitDistance; }
+		void SetContactPoint(glm::vec3 _contactPoint) { mContactPoint = _contactPoint; }
 
 		float GetForce() { return mForce; }
 
@@ -67,6 +68,7 @@ namespace JamesEngine
 
 		bool mGroundContact = false;
 		float mHitDistance = 0.0f;
+		glm::vec3 mContactPoint{ 0 };
 
 		float mSteeringAngle = 0.0f;
 

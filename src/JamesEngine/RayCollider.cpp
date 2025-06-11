@@ -190,6 +190,7 @@ namespace JamesEngine
                     sus->SetCollision(true);
                     sus->SetHitDistance(glm::dot(hitPoint - rayOrigin, rayDirection));
 					sus->SetSurfaceNormal(hitNormal);
+					sus->SetContactPoint(hitPoint);
                 }
 
 				std::shared_ptr<Tire> tire = GetEntity()->GetComponent<Tire>();

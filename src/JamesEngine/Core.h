@@ -4,6 +4,7 @@
 #include "Audio.h"
 #include "GUI.h"
 #include "LightManager.h"
+#include "RaycastSystem.h"
 
 #include <memory>
 #include <vector>
@@ -46,6 +47,7 @@ namespace JamesEngine
 		std::shared_ptr<GUI> GetGUI() const { return mGUI; }
 		std::shared_ptr<LightManager> GetLightManager() const { return mLightManager; }
 		std::shared_ptr<Skybox> GetSkybox() const { return mSkybox; }
+		std::shared_ptr<RaycastSystem> GetRaycastSystem() const { return mRaycastSystem; }
 
 		/**
 		 * @brief Adds a new entity to the engine.
@@ -146,6 +148,7 @@ namespace JamesEngine
 		std::shared_ptr<GUI> mGUI;
 		std::shared_ptr<LightManager> mLightManager;
 		std::shared_ptr<Skybox> mSkybox;
+		std::shared_ptr<RaycastSystem> mRaycastSystem;
 		std::shared_ptr<Resources> mResources;
 		std::vector<std::shared_ptr<Entity>> mEntities;
 		std::weak_ptr<Core> mSelf;
@@ -154,7 +157,7 @@ namespace JamesEngine
 
 		float mDeltaTime = 0.0f;
 
-		float mFixedDeltaTime = 0.005f; // 200 fps
+		float mFixedDeltaTime = 0.01f; // 100 fps
 		float mFixedTimeAccumulator = 0.0f;
 
 		float mTimeScale = 1.f;

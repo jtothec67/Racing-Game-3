@@ -22,6 +22,7 @@ namespace JamesEngine
 		rtn->mGUI = std::make_shared<GUI>(rtn);
 		rtn->mLightManager = std::make_shared<LightManager>();
 		rtn->mSkybox = std::make_shared<Skybox>(rtn);
+		rtn->mRaycastSystem = std::make_shared<RaycastSystem>(rtn);
 		rtn->mInput = std::make_shared<Input>();
 
 		rtn->mSelf = rtn;
@@ -79,11 +80,8 @@ namespace JamesEngine
 
 			mFixedTimeAccumulator += mDeltaTime;
 
-			if (mFixedTimeAccumulator > mFixedDeltaTime * 2) // Allow max 2 fixed updates per frame
-				mFixedTimeAccumulator = mFixedDeltaTime * 2;
-
-			Timer debugTimer;
-			debugTimer.Start();
+			if (mFixedTimeAccumulator > mFixedDeltaTime * 3) // Allow max 3 fixed updates per frame
+				mFixedTimeAccumulator = mFixedDeltaTime * 3;
 
 			int numFixedUpdates = 0;
 
@@ -107,13 +105,6 @@ namespace JamesEngine
 				numFixedUpdates++;
 
 				mFixedTimeAccumulator -= mFixedDeltaTime;
-				//std::cout << "Fixed time accumulator: " << mFixedTimeAccumulator << std::endl;
-			}
-
-			if (numFixedUpdates > 0)
-			{
-				//std::cout << "Fixed time step took: " << debugTimer.Stop() << std::endl;
-				//std::cout << "Fixed updates this frame: " << numFixedUpdates << std::endl;
 			}
 
 			for (size_t ei = 0; ei < mEntities.size(); ei++)
@@ -124,6 +115,8 @@ namespace JamesEngine
 					ei--;
 				}
 			}
+
+			mRaycastSystem->ClearCache();
 
 			mWindow->Update();
 

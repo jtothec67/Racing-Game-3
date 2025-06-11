@@ -131,6 +131,8 @@ namespace JamesEngine
         float maxBrakeTorqueTransferable = Fmax * mTireParams.tireRadius;
         bool tooMuchBrake = (mBrakeTorque > maxBrakeTorqueTransferable);
 
+		std::cout << GetEntity()->GetTag() << " Fmax: " << Fmax << std::endl;
+
         if (gamma < Fmax)
         {
             // Elastic (grip) region: proportional longitudinal and lateral forces

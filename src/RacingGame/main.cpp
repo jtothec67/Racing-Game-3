@@ -135,7 +135,7 @@ struct CarController : public Component
 	std::shared_ptr<Entity> frontDownforcePos;
 
 	// Aerodynamic properties
-	float dragCoefficient = 0.6f;
+	float dragCoefficient = 0.5f;
 	float frontalArea = 2.2f; // m^2
 
 	// Steering parameters

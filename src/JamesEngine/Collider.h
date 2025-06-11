@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "RaycastSystem.h"
 
 #ifdef _DEBUG
 #include "Renderer/Shader.h"
@@ -18,6 +19,7 @@ namespace JamesEngine
 #endif
 
 		virtual bool IsColliding(std::shared_ptr<Collider> _other, glm::vec3& _collisionPoint, glm::vec3& _normal, float& _penetrationDepth) = 0;
+		virtual bool RayCollision(const Ray& _ray, RaycastHit& _outHit) = 0;
 
 		virtual glm::mat3 UpdateInertiaTensor(float _mass) = 0;
 
